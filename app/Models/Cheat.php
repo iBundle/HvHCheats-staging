@@ -20,6 +20,7 @@ class Cheat extends Model
         'slug',
         'description',
         'love',
+        'downloads',
         'cheat',
         'game_id',
         'cheat_status_id',

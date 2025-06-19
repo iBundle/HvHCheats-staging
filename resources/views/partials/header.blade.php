@@ -74,7 +74,7 @@
             <div class="menu--right">
                 <!-- Auth Button -->
                 <div class="header__wallet btn btn--primary">
-                    <i class="fa-solid fa-wallet"></i>
+                    <i class="fa-solid fa-lock"></i>
                     <p>Войти в систему</p>
                 </div>
 

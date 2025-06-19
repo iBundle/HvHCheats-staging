@@ -26,15 +26,17 @@ $cheats = computed(function () {
             @forelse($this->cheats as $cheat)
                 <article class="article picks__card">
                     <div class="card__img-container">
-                        <img src="{{ $cheat->image }}"
-                             alt="{{ $cheat->name }}"
-                             class="card__img"
-                             loading="lazy">
+                        <a href="{{ route('cheat.show', $cheat->slug) }}">
+                            <img src="{{ $cheat->image }}"
+                                 alt="{{ $cheat->name }}"
+                                 class="card__img"
+                                 loading="lazy">
+                        </a>
                     </div>
 
                     <div class="card__info">
                         <h3 class="card__title">
-                            <a href="#">{{ $cheat->name }}</a>
+                            <a href="{{ route('cheat.show', $cheat->slug) }}">{{ $cheat->name }}</a>
                         </h3>
                         <div class="card__creator">
                             <a href="#">
@@ -43,13 +45,13 @@ $cheats = computed(function () {
                                      class="creator__img">
                             </a>
                             <div class="creator__info">
-                                <p class="creatot__label">Игра</p>
+                                <p class="creator__label">Игра</p>
                                 <a href="#"
                                    class="creator__name">{{ $cheat->game->name }}</a>
                             </div>
-{{--                            <div class="creator__bsc bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">--}}
-{{--                                {{ $cheat->type }}--}}
-{{--                            </div>--}}
+                            {{--                            <div class="creator__bsc bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">--}}
+                            {{--                                {{ $cheat->type }}--}}
+                            {{--                            </div>--}}
                         </div>
                     </div>
 
@@ -61,14 +63,15 @@ $cheats = computed(function () {
                                     <i class="fa-solid fa-heart text-red-500"></i> {{ $cheat->love }}
                                 </span>
                                 <span class="inline-flex items-center gap-1 ml-3">
-                                    <i class="fa-solid fa-download text-gray-500"></i> {{ number_format($cheat->downloads) }}
+                                    <i class="fa-solid fa-download text-gray-500"></i> {{ number_format($cheat->downloads ?? 0) }}
                                 </span>
                             </p>
                         </div>
-                        <div class="card__bid-history bg-violet-800 hover:bg-violet-900 text-white rounded-lg transition-colors cursor-pointer"
-                             style="padding: 5px 10px">
-                            <i class="fa-solid fa-download"></i> Скачать
-                        </div>
+                        <a href="{{ route('cheat.show', $cheat->slug) }}"
+                           class="card__bid-history bg-violet-800 hover:bg-violet-900 text-white rounded-lg transition-colors"
+                           style="padding: 5px 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-eye"></i> Подробнее
+                        </a>
                     </div>
                 </article>
             @empty

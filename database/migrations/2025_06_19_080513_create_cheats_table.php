@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->text('description')->nullable();
             $table->unsignedInteger('love')->default(0);
+            $table->unsignedInteger('downloads')->default(0);
 
             // Связи
             $table->foreignId('game_id')->constrained()->onDelete('cascade');

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CheatController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
@@ -7,6 +8,7 @@ use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 // Home page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/cheat', [HomeController::class, 'cheat'])->name('cheat.index');
+Route::get('/cheat/{cheat:slug}', [CheatController::class, 'show'])->name('cheat.show');
 
 // Temporary routes for development (will be moved to separate controllers)
 Route::name('cheats.')->prefix('cheats')->group(function (): void {

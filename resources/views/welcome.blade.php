@@ -116,14 +116,14 @@
     </section>
 
     <!-- Sellers Section -->
-    <section id="sellers">
-        <div class="container sellers__wrapper">
-            <div class="section__header">
-                <h2 class="section__title">Лучшие читеры</h2>
-            </div>
-            <div id="seller-cards" class="seller__cards"></div>
-        </div>
-    </section>
+{{--    <section id="sellers">--}}
+{{--        <div class="container sellers__wrapper">--}}
+{{--            <div class="section__header">--}}
+{{--                <h2 class="section__title">Лучшие читеры</h2>--}}
+{{--            </div>--}}
+{{--            <div id="seller-cards" class="seller__cards"></div>--}}
+{{--        </div>--}}
+{{--    </section>--}}
 
     <!-- Picks Section (Cheats List) -->
     @livewire('cheats-list')
