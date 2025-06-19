@@ -1,0 +1,105 @@
+body {
+  height: 100vh;
+}
+
+.body--loaded .loading__spinner {
+  display: none;
+}
+
+.loading__spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spinner__planet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 8rem;
+  width: 8rem;
+}
+
+.spinner__sun {
+  @include shadow-animation("sun", #ffae00);
+
+  background-image: linear-gradient(141deg, #ff7300, #ffae00);
+  box-shadow: 0 0 4rem 0.1rem #ffae00;
+  border-radius: 50%;
+  animation: planets-move 3s infinite, planets-shine--sun 2s infinite;
+}
+
+.spinner__moon {
+  @include shadow-animation("moon", #6ca4da);
+
+  background-image: linear-gradient(141deg, #0084ff, #6ca4da);
+  box-shadow: 0 0 4rem 0.1rem #6ca4da;
+  border-radius: 50%;
+  animation: planets-move-reverse 3s infinite, planets-z-index 3s infinite,
+    planets-shine--moon 2s 0.5s infinite;
+}
+
+.moon__freckle {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.055);
+  border-radius: 100%;
+  transform: rotateZ(-30deg);
+}
+
+.moon__freckle--lg {
+  top: 1rem;
+  left: 1.5rem;
+  height: 0.8rem;
+  width: 1.5rem;
+}
+
+.moon__freckle--s {
+  top: 0.5rem;
+  left: 3rem;
+  height: 0.5rem;
+  width: 1rem;
+}
+
+.moon__freckle--xs {
+  top: 1.1rem;
+  left: 3.5rem;
+  height: 0.3rem;
+  width: 0.6rem;
+}
+
+@keyframes planets-move {
+  0%,
+  100% {
+    transform: translate(-120%, -50%);
+  }
+
+  50% {
+    transform: translate(0, -50%);
+  }
+}
+
+@keyframes planets-move-reverse {
+  0%,
+  100% {
+    transform: translate(0%, -50%);
+  }
+
+  50% {
+    transform: translate(-120%, -50%);
+  }
+}
+
+@keyframes planets-z-index {
+  0%,
+  49%,
+  100% {
+    z-index: 1;
+  }
+
+  50%,
+  99% {
+    z-index: -1;
+  }
+}

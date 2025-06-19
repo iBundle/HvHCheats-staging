@@ -1,0 +1,128 @@
+.picks__wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.picks__filters {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter__btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s ease-in-out;
+}
+
+.filter__btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.picks__filters--left {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(
+      0,
+      1fr
+    );
+  gap: 1.5rem;
+}
+
+.picks__cards {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 2rem;
+}
+
+.picks__card {
+  height: 100%;
+  width: Min(100%, 50rem);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  gap: 1.5rem;
+  border-radius: 1.8rem;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+  transition: all 0.3s ease-in-out;
+}
+
+.picks__card .pick__likes {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  box-shadow: none;
+}
+
+.card__bid-history {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.card__bid-history i {
+  transition: all 0.7s ease-in-out;
+}
+
+.card__bid-history--active i {
+  transform: rotateZ(360deg);
+}
+
+.picks__load-btn {
+  margin: 1rem 0 3rem 0;
+  padding: 1.1rem 2.5rem;
+  border-radius: 2.5rem;
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+}
+
+/* --------------------- Media Queries ----------------- */
+
+@media screen and (min-width: 300px) {
+  .picks__filters--left {
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media screen and (min-width: 688px) {
+  .picks__filters {
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .picks__filters--left {
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(
+        0,
+        1fr
+      );
+  }
+
+  .picks__cards {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .picks__cards {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(
+        0,
+        1fr
+      );
+  }
+}

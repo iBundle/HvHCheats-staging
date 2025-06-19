@@ -1,0 +1,25 @@
+@mixin shadow-animation($element, $shadow-color) {
+  & {
+    @keyframes planets-shine--#{$element} {
+      0%,
+      100% {
+        box-shadow: 0 0 3rem 0.1rem $shadow-color;
+      }
+
+      50% {
+        box-shadow: 0 0 2rem 0.1rem $shadow-color;
+      }
+    }
+  }
+}
+
+@mixin flex($direction, $isCenter, $gap) {
+  display: flex;
+  flex-direction: $direction;
+  gap: $gap;
+
+  @if $isCenter {
+    align-items: center;
+    justify-content: center;
+  }
+}
