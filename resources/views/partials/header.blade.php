@@ -73,10 +73,25 @@
             <!-- Right Menu -->
             <div class="menu--right">
                 <!-- Auth Button -->
-                <div class="header__wallet btn btn--primary">
-                    <i class="fa-solid fa-lock"></i>
-                    <p>Войти в систему</p>
-                </div>
+
+            @guest
+                    <a href="{{route('login')}}">
+                    <div class="header__wallet btn btn--primary">
+                        <i class="fa-solid fa-lock"></i>
+                        <p>Войти в систему</p>
+                    </div>
+                    </a>
+            @endguest
+
+            @auth
+                    <a href="{{route('dashboard')}}">
+                        <div class="header__wallet btn btn--primary">
+                            <i class="fa-solid fa-user"></i>
+                            <p>Панель управления</p>
+                        </div>
+                    </a>
+            @endauth
+
 
                 <!-- Theme Switcher -->
                 <div class="theme">

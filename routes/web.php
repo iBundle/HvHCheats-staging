@@ -50,6 +50,8 @@ Route::middleware([
     Route::view('dashboard', 'pages.dashboard.dashboard')->name('dashboard');
     Route::view('dashboard/cheats', 'pages.admin.cheats')->name('cheats');
     Route::view('dashboard/cheats/create', 'pages.admin.add-cheats')->name('cheats.create');
+    Route::view('dashboard/collections', 'pages.admin.collections')->name('collections');
+    Route::view('dashboard/collections/create', 'pages.admin.add-collection')->name('collections.create');
 });
 
 require __DIR__.'/settings.php';

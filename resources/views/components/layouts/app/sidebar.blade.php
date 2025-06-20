@@ -17,6 +17,13 @@
                 </flux:navlist.group>
             </flux:navlist>
 
+            <flix:separator></flix:separator>
+
+            <flux:navlist.item icon="list-bullet" :href="route('collections')" wire:navigate>Список коллекций</flux:navlist.item>
+            <flux:navlist.item icon="plus-circle" :href="route('collections.create')" wire:navigate>Добавить коллекцию</flux:navlist.item>
+
+            <flix:separator></flix:separator>
+
             <flux:navlist.item icon="list-bullet" :href="route('cheats')" wire:navigate>Список читов</flux:navlist.item>
             <flux:navlist.item icon="plus-circle" :href="route('cheats.create')" wire:navigate>Добавить чит</flux:navlist.item>
 
