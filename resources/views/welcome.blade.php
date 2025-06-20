@@ -103,15 +103,88 @@
         </div>
     </section>
 
-    <!-- Collections Section -->
     <section id="collections">
         <div class="container collections__wrapper">
             <div class="section__header">
                 <h2 class="section__title">Популярные коллекции</h2>
-                <a href="#" class="section__explore-btn">Explore More</a>
             </div>
 
-            <div id="collections-page" class="collections__page"></div>
+            <div id="collections-page" class="collections__page"><article id="collection_1" class="article collection__card ">
+                    <div class="collection__img-container">
+                        <img src="/Assets/Images/06_Popular_Collection/box1/collection-item-2.jpg" alt="popular collection" class="collection__img collection__img--first" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box1/collection-item-bottom-4.jpg" alt="popular collection" class="collection__img collection__img--second" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box1/collection-item-top-1.jpg" alt="popular collection" class="collection__img collection__img--third" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box1/collection-item-top-2.jpg" alt="popular collection" class="collection__img collection__img--forth" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box2/img-collection24.jpg" alt="popular collection" class="collection__img collection__img--fifth" loading="lazy">
+                    </div>
+                    <div class="collection__creator-info">
+                        <a href="#" class="collection__creator-link">
+                            <div class="collection__creator-img">
+                                <img src="/Assets/Images/04_Top_Seller/avt-1.jpg" alt="collection creator">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                        </a>
+                        <div class="collection__info">
+                            <h3 class="collection__name"><a href="#" class="collection__link">Creative Art Collection</a></h3>
+                            <p class="collection__creator">
+                                Created by <a href="#" class="collection__creator-link">Ralph Garraway</a>
+                            </p>
+                        </div>
+                        <div class="article__likes collection__likes">
+                            <div class="like__btn"></div>
+                            <p class="article__likes-count collection__likes-count">748</p>
+                        </div>
+                    </div></article><article id="collection_2" class="article collection__card ">
+                    <div class="collection__img-container">
+                        <img src="/Assets/Images/06_Popular_Collection/box2/img-collection10.jpg" alt="popular collection" class="collection__img collection__img--first" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box2/img-collection11.jpg" alt="popular collection" class="collection__img collection__img--second" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box2/img-collection23.jpg" alt="popular collection" class="collection__img collection__img--third" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box3/img-collection12.jpg" alt="popular collection" class="collection__img collection__img--forth" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box2/img-collection24.jpg" alt="popular collection" class="collection__img collection__img--fifth" loading="lazy">
+                    </div>
+                    <div class="collection__creator-info">
+                        <a href="#" class="collection__creator-link">
+                            <div class="collection__creator-img">
+                                <img src="/Assets/Images/04_Top_Seller/avt-7.jpg" alt="collection creator">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                        </a>
+                        <div class="collection__info">
+                            <h3 class="collection__name"><a href="#" class="collection__link">Colorful Abstract</a></h3>
+                            <p class="collection__creator">
+                                Created by <a href="#" class="collection__creator-link">Ralph Garraway</a>
+                            </p>
+                        </div>
+                        <div class="article__likes collection__likes">
+                            <div class="like__btn"></div>
+                            <p class="article__likes-count collection__likes-count">149</p>
+                        </div>
+                    </div></article><article id="collection_3" class="article collection__card ">
+                    <div class="collection__img-container">
+                        <img src="/Assets/Images/06_Popular_Collection/box3/img-collection12.jpg" alt="popular collection" class="collection__img collection__img--first" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box3/img-collection17.jpg" alt="popular collection" class="collection__img collection__img--second" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box3/img-collection18.jpg" alt="popular collection" class="collection__img collection__img--third" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box3/img-collection25.jpg" alt="popular collection" class="collection__img collection__img--forth" loading="lazy">
+                        <img src="/Assets/Images/06_Popular_Collection/box1/collection-item-top-1.jpg" alt="popular collection" class="collection__img collection__img--fifth" loading="lazy">
+                    </div>
+                    <div class="collection__creator-info">
+                        <a href="#" class="collection__creator-link">
+                            <div class="collection__creator-img">
+                                <img src="/Assets/Images/04_Top_Seller/avt-8.jpg" alt="collection creator">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                        </a>
+                        <div class="collection__info">
+                            <h3 class="collection__name"><a href="#" class="collection__link">Modern Art Collection</a></h3>
+                            <p class="collection__creator">
+                                Created by <a href="#" class="collection__creator-link">Ralph Garraway</a>
+                            </p>
+                        </div>
+                        <div class="article__likes collection__likes">
+                            <div class="like__btn"></div>
+                            <p class="article__likes-count collection__likes-count">312</p>
+                        </div>
+                    </div></article></div>
         </div>
     </section>
 

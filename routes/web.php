@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\CheatController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PartnersController;
 use Illuminate\Support\Facades\Route;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
@@ -9,6 +11,12 @@ use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/cheat', [HomeController::class, 'cheat'])->name('cheat.index');
 Route::get('/cheat/{cheat:slug}', [CheatController::class, 'show'])->name('cheat.show');
+
+
+// Contact and Partners pages
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+
 
 // Temporary routes for development (will be moved to separate controllers)
 Route::name('cheats.')->prefix('cheats')->group(function (): void {

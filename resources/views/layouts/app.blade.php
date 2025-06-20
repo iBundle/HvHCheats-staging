@@ -74,16 +74,14 @@
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 <!-- Core Scripts -->
-<script src="{{ asset('Assets/Data/itemsData.js') }}"></script>
-<script src="{{ asset('Assets/Data/CollectionsData.js') }}"></script>
 <script src="{{ asset('Assets/Data/SellersData.js') }}"></script>
 <script src="{{ asset('Javascript/index.js') }}"></script>
 <script src="{{ asset('Javascript/theme.js') }}"></script>
 <script src="{{ asset('Javascript/header.js') }}"></script>
 <script src="{{ asset('Javascript/hero.js') }}"></script>
-<script src="{{ asset('Javascript/collections.js') }}"></script>
 <script src="{{ asset('Javascript/sellers.js') }}"></script>
 <script src="{{ asset('Javascript/socials.js') }}"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <!-- Additional Scripts -->
 @stack('scripts')

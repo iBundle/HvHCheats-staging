@@ -22,7 +22,7 @@
                 <!-- Главная страница -->
                 <div class="menu__item">
                     <div class="menu__item-btn">
-                        <p class="menu__label">Главная страница</p>
+                        <a href="/"><p class="menu__label">Главная страница</p></a>
                     </div>
                 </div>
 
@@ -60,12 +60,12 @@
                 <!-- Служба поддержки -->
                 <div class="menu__item">
                     <div class="menu__item-btn">
-                        <p class="menu__label">Служба поддержки</p>
+                        <a href="{{route('contact')}}"><p class="menu__label">Служба поддержки</p></a>
                         <i class="fa-solid fa-chevron-down menu__icon"></i>
                     </div>
                     <ul class="menu__submenu">
-                        <li class="menu__item submenu__item">Техническая поддержка</li>
-                        <li class="menu__item submenu__item">Партнёрам</li>
+                        <a href="{{route('contact')}}"><li class="menu__item submenu__item">Техническая поддержка</li></a>
+{{--                        <li class="menu__item submenu__item">Партнёрам</li>--}}
                     </ul>
                 </div>
             </div>

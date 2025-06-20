@@ -139,7 +139,7 @@
                     <div class="features__grid">
                         <div class="feature__item">
                             <div class="feature__icon">
-                                <i class="fa-solid fa-shield-halved"></i>
+                                <i class="fa-solid fa-shield-virus"></i>
                             </div>
                             <h4 class="feature__title">Безопасность</h4>
                             <p class="feature__description">Проверено антивирусами</p>
