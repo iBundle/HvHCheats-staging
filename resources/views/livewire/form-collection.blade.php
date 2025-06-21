@@ -3,6 +3,8 @@
 use function Livewire\Volt\{state, computed, updated, uses};
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
+use App\Actions\Games\CreateGameAction;
+use App\Models\Game;
 
 // Add file upload trait
 uses([WithFileUploads::class]);
@@ -25,25 +27,45 @@ state([
     'metaTitle' => '',
     'metaDescription' => '',
     'metaKeywords' => '',
+
+    // Validation state
+    'isSubmitting' => false,
 ]);
 
 // Auto-generate slug when name changes
 updated(['name' => function ($value) {
     if (!empty($value) && empty($this->slug)) {
-        $this->slug = Str::slug($value);
+        $action = new CreateGameAction();
+        $this->slug = $action->generateUniqueSlug($value);
     }
 }]);
 
-// Progress calculation
-$progressPercentage = computed(function () {
-    return ($this->currentStep / $this->totalSteps) * 100;
-});
+// Check slug uniqueness when slug changes
+updated(['slug' => function ($value) {
+    if (!empty($value)) {
+        $this->validateSlug();
+    }
+}]);
 
-// Step validation and navigation
-$canProceedToNextStep = computed(function () {
+// Simple slug validation
+$validateSlug = function () {
+    if (!empty($this->slug)) {
+        $action = new CreateGameAction();
+        if (!$action->validateSlugUniqueness($this->slug)) {
+            $this->addError('slug', 'SLUG уже используется. Выберите другой.');
+        } else {
+            $this->resetErrorBag('slug');
+        }
+    }
+};
+
+// Check if can proceed to next step
+$canProceed = computed(function () {
     switch ($this->currentStep) {
         case 1:
-            return !empty($this->name) && !empty($this->slug);
+            return !empty($this->name) &&
+                !empty($this->slug) &&
+                empty($this->getErrorBag()->get('slug'));
         case 2:
             return !empty($this->imagePreview);
         case 3:
@@ -55,7 +77,7 @@ $canProceedToNextStep = computed(function () {
 
 // Navigation methods
 $nextStep = function () {
-    if ($this->canProceedToNextStep && $this->currentStep < $this->totalSteps) {
+    if ($this->canProceed && $this->currentStep < $this->totalSteps) {
         $this->currentStep++;
     }
 };
@@ -73,11 +95,74 @@ $updatedImage = function () {
     }
 };
 
-// Form submission (placeholder for now)
+// Form submission
 $submitForm = function () {
-    session()->flash('success', 'Коллекция успешно создана!');
-    $this->reset();
-    $this->currentStep = 1;
+    try {
+        $this->isSubmitting = true;
+
+        // Use standard Livewire validation with rules from Request class
+        $validatedData = $this->validate([
+            'name' => 'required|string|min:3|max:255|unique:games,name',
+            'slug' => 'required|string|min:3|max:255|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/|unique:games,slug',
+            'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'description' => 'nullable|string|max:1000',
+            'metaTitle' => 'nullable|string|max:60',
+            'metaDescription' => 'nullable|string|max:160',
+            'metaKeywords' => 'nullable|string|max:255',
+        ], [
+            'name.required' => 'Название коллекции обязательно для заполнения.',
+            'name.min' => 'Название должно содержать минимум 3 символа.',
+            'name.max' => 'Название не может превышать 255 символов.',
+            'name.unique' => 'Коллекция с таким названием уже существует.',
+            'slug.required' => 'SLUG обязателен для заполнения.',
+            'slug.min' => 'SLUG должен содержать минимум 3 символа.',
+            'slug.max' => 'SLUG не может превышать 255 символов.',
+            'slug.regex' => 'SLUG может содержать только строчные буквы, цифры и дефисы.',
+            'slug.unique' => 'SLUG уже используется. Выберите другой.',
+            'image.required' => 'Изображение коллекции обязательно.',
+            'image.image' => 'Файл должен быть изображением.',
+            'image.mimes' => 'Поддерживаются только форматы: JPEG, JPG, PNG, WebP.',
+            'image.max' => 'Размер изображения не должен превышать 2MB.',
+            'description.max' => 'Описание не может превышать 1000 символов.',
+            'metaTitle.max' => 'META Title не должен превышать 60 символов.',
+            'metaDescription.max' => 'META Description не должно превышать 160 символов.',
+            'metaKeywords.max' => 'META Keywords не должны превышать 255 символов.',
+        ]);
+
+        // Prepare data for Action class
+        $gameData = [
+            'name' => $validatedData['name'],
+            'slug' => $validatedData['slug'],
+            'description' => $validatedData['description'],
+            'meta_title' => $validatedData['metaTitle'],
+            'meta_description' => $validatedData['metaDescription'],
+            'meta_keywords' => $validatedData['metaKeywords'],
+            'is_active' => true,
+            'sort_order' => 999,
+        ];
+
+        // Create game using Action
+        $action = new CreateGameAction();
+        $game = $action->execute($gameData, $this->image);
+
+        // Success
+        session()->flash('success', 'Коллекция "' . $game->name . '" успешно создана!');
+
+        // Reset form
+        $this->reset();
+        $this->currentStep = 1;
+
+        // Redirect to collections list
+        return redirect()->route('collections');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $this->isSubmitting = false;
+        // Validation errors will be automatically shown by Livewire
+
+    } catch (\Exception $e) {
+        $this->isSubmitting = false;
+        session()->flash('error', 'Произошла ошибка при создании коллекции. Попробуйте еще раз.');
+    }
 };
 
 ?>
@@ -177,10 +262,11 @@ $submitForm = function () {
                                 <label for="name" class="block text-sm font-medium text-gray-300">
                                     Название коллекции
                                 </label>
-                                <flux:input type="text"
+                                <input type="text"
                                        id="name"
                                        wire:model.live="name"
-                                       placeholder="Например: Counter-Strike 2"/>
+                                       class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                                       placeholder="Например: Counter-Strike 2">
                                 @error('name')
                                 <p class="text-red-400 text-sm">{{ $message }}</p>
                                 @enderror
@@ -192,14 +278,19 @@ $submitForm = function () {
                                     SLUG коллекции
                                 </label>
                                 <div class="relative">
-                                    <flux:input type="text"
+                                    <input type="text"
                                            id="slug"
                                            wire:model.live="slug"
-                                           placeholder="counter-strike-2"/>
+                                           class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                                           placeholder="counter-strike-2">
                                     <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        @if(!empty($slug))
+                                        @if(!empty($slug) && !$errors->has('slug'))
                                             <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            </svg>
+                                        @elseif(!empty($slug) && $errors->has('slug'))
+                                            <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                             </svg>
                                         @endif
                                     </div>
@@ -243,10 +334,14 @@ $submitForm = function () {
                                 <label for="description" class="block text-sm font-medium text-gray-300">
                                     Описание коллекции
                                 </label>
-                                <flux:textarea id="description"
+                                <textarea id="description"
                                           wire:model="description"
                                           rows="4"
-                                          placeholder="Краткое описание коллекции..."></flux:textarea>
+                                          class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 resize-none"
+                                          placeholder="Краткое описание коллекции..."></textarea>
+                                @error('description')
+                                <p class="text-red-400 text-sm">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Image Upload Area --}}
@@ -274,7 +369,7 @@ $submitForm = function () {
                                         </div>
                                     @else
                                         {{-- Upload Dropzone --}}
-                                        <div class="border-2 border-dashed border-gray-600 rounded-xl p-6 text-center hover:border-violet-500 transition-colors">
+                                        <div class="border-2 border-dashed border-gray-600 rounded-xl p-6 text-center hover:border-violet-500 transition-colors bg-gray-700/50">
                                             <div class="mx-auto w-12 h-12 text-gray-400 mb-3">
                                                 <svg fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
@@ -332,7 +427,7 @@ $submitForm = function () {
                             </div>
 
                             {{-- SEO Meta Fields --}}
-                            <div class="rounded-xl p-6 space-y-4 border border-gray-600">
+                            <div class="bg-gray-700/50 rounded-xl p-6 space-y-4 border border-gray-600">
                                 <h3 class="text-lg font-semibold text-white mb-4">
                                     SEO настройки (опционально)
                                 </h3>
@@ -342,10 +437,14 @@ $submitForm = function () {
                                     <label for="metaTitle" class="block text-sm font-medium text-gray-300">
                                         META Title
                                     </label>
-                                    <flux:input type="text"
+                                    <input type="text"
                                            id="metaTitle"
                                            wire:model="metaTitle"
-                                           x-bind:placeholder="'Читы для ' + ($wire.name || 'игры') + ' - скачать бесплатно'"/>
+                                           class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                                           x-bind:placeholder="'Читы для ' + ($wire.name || 'игры') + ' - скачать бесплатно'">
+                                    @error('metaTitle')
+                                    <p class="text-red-400 text-sm">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 {{-- Meta Description --}}
@@ -353,10 +452,14 @@ $submitForm = function () {
                                     <label for="metaDescription" class="block text-sm font-medium text-gray-300">
                                         META Description
                                     </label>
-                                    <flux:textarea id="metaDescription"
+                                    <textarea id="metaDescription"
                                               wire:model="metaDescription"
                                               rows="3"
-                                              x-bind:placeholder="'Лучшие читы для ' + ($wire.name || 'игры') + '. Безопасные, проверенные и постоянно обновляемые читы с гарантией качества.'"></flux:textarea>
+                                              class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 resize-none"
+                                              x-bind:placeholder="'Лучшие читы для ' + ($wire.name || 'игры') + '. Безопасные, проверенные и постоянно обновляемые читы с гарантией качества.'"></textarea>
+                                    @error('metaDescription')
+                                    <p class="text-red-400 text-sm">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 {{-- Meta Keywords --}}
@@ -364,10 +467,14 @@ $submitForm = function () {
                                     <label for="metaKeywords" class="block text-sm font-medium text-gray-300">
                                         META Keywords
                                     </label>
-                                    <flux:input type="text"
+                                    <input type="text"
                                            id="metaKeywords"
                                            wire:model="metaKeywords"
-                                           x-bind:placeholder="'читы, ' + ($wire.name || 'игра') + ', скачать, бесплатно'"/>
+                                           class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                                           x-bind:placeholder="'читы, ' + ($wire.name || 'игра') + ', скачать, бесплатно'">
+                                    @error('metaKeywords')
+                                    <p class="text-red-400 text-sm">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -399,17 +506,10 @@ $submitForm = function () {
                         <button type="button"
                                 wire:click="nextStep"
                                 x-show="currentStep < 3"
-                                x-bind:disabled="!canProceed"
-                                x-data="{
-                                    get canProceed() {
-                                        if (currentStep === 1) return $wire.name && $wire.slug;
-                                        if (currentStep === 2) return true;
-                                        return true;
-                                    }
-                                }"
+                                x-bind:disabled="!$wire.canProceed"
                                 x-bind:class="{
-                                    'bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-500/25': canProceed,
-                                    'bg-gray-600 text-gray-400 cursor-not-allowed': !canProceed
+                                    'bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-500/25': $wire.canProceed,
+                                    'bg-gray-600 text-gray-400 cursor-not-allowed': !$wire.canProceed
                                 }"
                                 class="inline-flex items-center px-6 py-3 rounded-lg transition-all duration-200">
                             Продолжить
@@ -422,11 +522,17 @@ $submitForm = function () {
                         <button type="button"
                                 wire:click="submitForm"
                                 x-show="currentStep === 3"
+                                :disabled="$wire.isSubmitting"
+                                :class="{ 'opacity-50 cursor-not-allowed': $wire.isSubmitting }"
                                 class="inline-flex items-center px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 shadow-lg shadow-green-500/25">
-                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" x-show="!$wire.isSubmitting">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
-                            Создать коллекцию
+                            <svg class="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" x-show="$wire.isSubmitting">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span x-text="$wire.isSubmitting ? 'Создание...' : 'Создать коллекцию'"></span>
                         </button>
                     </div>
                 </div>
@@ -442,6 +548,18 @@ $submitForm = function () {
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
                     <p class="text-green-300 font-medium">{{ session('success') }}</p>
+                </div>
+            </div>
+        @endif
+
+        {{-- Error Message --}}
+        @if(session()->has('error'))
+            <div class="mt-6 bg-red-900/50 border border-red-700 rounded-lg p-4">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-red-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <p class="text-red-300 font-medium">{{ session('error') }}</p>
                 </div>
             </div>
         @endif
