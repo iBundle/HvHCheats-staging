@@ -21,6 +21,7 @@ class Cheat extends Model
         'description',
         'love',
         'downloads',
+        'image',
         'cheat',
         'game_id',
         'cheat_status_id',
