@@ -4,9 +4,12 @@ use App\Actions\Cheats\CreateCheatAction;
 use App\Models\Game;
 use Livewire\WithFileUploads;
 use function Livewire\Volt\{state, rules, mount, with, uses};
+use Masmerise\Toaster\Toaster;
 
 // Add the WithFileUploads trait
 uses([WithFileUploads::class]);
+
+
 
 // Component state
 state([
@@ -54,6 +57,7 @@ $nextStep = function () {
         'image.mimes' => 'Поддерживаются только форматы: JPEG, JPG, PNG, WebP.',
         'image.max' => 'Размер изображения не должен превышать 2MB.',
     ]);
+
 
     $this->currentStep = 2;
 };
@@ -124,7 +128,8 @@ $save = function () {
         $cheat = $action->execute($cheatData, $this->image);
 
         // Success
-        session()->flash('success', 'Чит "' . $cheat->name . '" успешно создан!');
+        Toaster::success('Чит "' . $cheat->name . '" успешно создан!'); // 👈
+
 
         // Reset form
         $this->reset();
@@ -139,8 +144,7 @@ $save = function () {
 
     } catch (\Exception $e) {
         $this->isSubmitting = false;
-        session()->flash('error', 'Произошла ошибка при создании чита. Попробуйте еще раз.');
-
+        Toaster::error('Произошла ошибка при создании чита. Попробуйте еще раз.'); // 👈
         // Log the error for debugging
         \Illuminate\Support\Facades\Log::error('Cheat creation error: ' . $e->getMessage());
     }
@@ -292,11 +296,13 @@ with(function () {
                             </p>
                         </div>
 
+
                         {{-- Description --}}
                         <div class="md:col-span-2">
                             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Описание чита
                             </label>
+
                             <textarea wire:model.blur="description"
                                       id="description"
                                       rows="6"

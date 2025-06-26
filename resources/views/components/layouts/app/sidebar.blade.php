@@ -144,5 +144,6 @@
         {{ $slot }}
 
         @fluxScripts
+        <x-toaster-hub />
     </body>
 </html>
